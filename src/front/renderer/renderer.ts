@@ -1,4 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+import { BrowserWindow } from "electron";
+
+(async () => {
+	
 	let currentMonth: number;
 	let currentYear: number;
 	const monthNames: string[] = [
@@ -6,6 +9,29 @@ document.addEventListener("DOMContentLoaded", () => {
 	  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
 	];
   
+	interface CalendarEvent {
+		title: string;
+		description: string;
+		startDate: Date;
+		endDate: Date;
+	  }
+	  
+	  const events: CalendarEvent[] = [
+		{ 
+		  title: 'Événement 1', 
+		  description: 'Description de l\'événement 1',
+		  startDate: new Date(2023, 6, 1), // Date de début de l'événement (année, mois, jour)
+		  endDate: new Date(2023, 6, 1)    // Date de fin de l'événement (année, mois, jour)
+		},
+		{ 
+		  title: 'Événement 2', 
+		  description: 'Description de l\'événement 2',
+		  startDate: new Date(2023, 6, 3), // Date de début de l'événement (année, mois, jour)
+		  endDate: new Date(2023, 6, 7)    // Date de fin de l'événement (année, mois, jour)
+		}
+	  ];
+	  
+
 	const monthElement = document.querySelector('.month') as HTMLElement;
 	const daysElement = document.querySelector('.days') as HTMLElement;
 	const currentMonthText = document.querySelector('.calendar .month .currentMontText') as HTMLElement;
@@ -26,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  currentMonthText.innerHTML = `${monthNames[currentMonth]} ${currentYear}`;
 		
 	 // Add the weekdays row
-	 const weekdaysRow = document.querySelector('.weekdays');
+	 const weekdaysRow = document.querySelector('.weekdays') as HTMLElement;
 	 weekdaysRow.innerHTML = "";
 	 const weekdays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
    
@@ -49,15 +75,53 @@ document.addEventListener("DOMContentLoaded", () => {
 	   divInfo.appendChild(text);
 	   divInfo.appendChild(weekday);
 
-	   eventTest.textContent = 'La belle voitureaaaaaaaaaaaaaaaaaaa';
-	   eventTest.classList.add('event');
-
 	   weekday.classList.add('weekday');
 	   divInfo.classList.add('day-info');
 	   
 	   day.appendChild(divInfo);
 
-	   day.appendChild(eventTest);
+	   const currentDate = new Date(currentYear, currentMonth, i);
+
+		// Find events for the current date
+		const eventsOnCurrentDate = events.filter(event => {
+			const eventStartDate = new Date(event.startDate);
+			const eventEndDate = new Date(event.endDate);
+
+			// Check if the current date falls within the event's start and end dates
+			return currentDate >= eventStartDate && currentDate <= eventEndDate;
+		});
+
+		// Add events to the day element
+		eventsOnCurrentDate.forEach(event => {
+			const eventElement = document.createElement('div');
+			eventElement.textContent = event.title;
+			eventElement.classList.add('event');
+			day.appendChild(eventElement);
+
+			// Event click handler
+			eventElement.addEventListener('click', () => {
+				// Create a new Electron window
+				
+				const options = {
+					width: 800,
+					height: 600,
+					webPreferences: {
+						nodeIntegration: true
+					}
+				}
+
+				const eventWindow = new BrowserWindow(options);
+
+				// Load the HTML file for displaying event information
+				eventWindow.loadFile('event.html');
+
+				// Pass the event information to the event window
+			eventWindow.webContents.on('did-finish-load', () => {
+				eventWindow.webContents.send('event-data', event);
+			});
+		
+		});
+	});
 
 	   daysElement.appendChild(day);
 	 }
@@ -91,5 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
 	// Initialize the calendar
 	updateCalendar();
-  });
+
+
+
+})()
+  
   
