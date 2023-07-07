@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+const { ipcRenderer } = require("electron");
 
 (async () => {
 	
@@ -92,36 +92,23 @@ import { BrowserWindow } from "electron";
 		});
 
 		// Add events to the day element
-		eventsOnCurrentDate.forEach(event => {
+		eventsOnCurrentDate.forEach((event, index) => {
 			const eventElement = document.createElement('div');
 			eventElement.textContent = event.title;
 			eventElement.classList.add('event');
+		  
+			eventElement.setAttribute('data-event-index', index.toString());
+		  
 			day.appendChild(eventElement);
-
+		  
 			// Event click handler
-			eventElement.addEventListener('click', () => {
-				// Create a new Electron window
-				
-				const options = {
-					width: 800,
-					height: 600,
-					webPreferences: {
-						nodeIntegration: true
-					}
-				}
-
-				const eventWindow = new BrowserWindow(options);
-
-				// Load the HTML file for displaying event information
-				eventWindow.loadFile('event.html');
-
-				// Pass the event information to the event window
-			eventWindow.webContents.on('did-finish-load', () => {
-				eventWindow.webContents.send('event-data', event);
-			});
-		
-		});
-	});
+			eventElement.addEventListener('click', ((eventData: CalendarEvent) => {
+			  return (event: MouseEvent) => {
+				// Send the selected event data to the main process
+				ipcRenderer.send('event-data', eventData);
+			  };
+			})(event));
+		  });
 
 	   daysElement.appendChild(day);
 	 }
@@ -157,6 +144,15 @@ import { BrowserWindow } from "electron";
 	updateCalendar();
 
 
+	function createEventClickHandler(index: number) {
+		return (event: MouseEvent) => {
+		  const eventIndex = (event.target as HTMLElement).getAttribute('data-event-index');
+		  const selectedEvent = events[Number(eventIndex)];
+	  
+		  // Send the selected event data to the main process
+		  ipcRenderer.send('event-data', selectedEvent);
+		};
+	  }
 
 })()
   

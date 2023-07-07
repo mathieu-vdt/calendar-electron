@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'node:path'
+
+let eventWindow: BrowserWindow | null = null;
 
 function createWindow() {
   // Create the browser window.
@@ -34,10 +36,55 @@ function createWindow() {
   // })
 }
 
+function createEventWindow(): BrowserWindow {
+  const eventWindow = new BrowserWindow({
+    width: 700,
+    height: 500,
+    title: "Évènement",
+
+    icon: join(__dirname, '../pages/img/typescript.png'),
+
+    webPreferences: {
+      preload: join(__dirname, './front/preload/preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+    }
+  })
+
+  eventWindow.loadFile('../pages/event.html')
+
+
+
+  // Open the DevTools.
+  eventWindow.webContents.openDevTools()
+
+  return eventWindow;
+
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  
+  // Écouter l'événement 'event-data' du processus de rendu
+  ipcMain.on('event-data', (event, eventData) => {
+    // Check if the event window is already open or has been destroyed
+    if (!eventWindow || eventWindow.isDestroyed()) {
+      eventWindow = createEventWindow();
+    }
+
+    // Load the HTML file for displaying event information
+    eventWindow.loadFile('../pages/event.html');
+
+    // Pass the event information to the event window
+    eventWindow.webContents.on('did-finish-load', () => {
+      if (eventWindow) {
+        eventWindow.webContents.send('event-data', eventData);
+      }
+    });
+  });
+
   createWindow()
 
   app.on('activate', function () {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Event Details</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
+</head>
+<body>
+  <h1>Event Details</h1>
+  <div id="event-details">
+    <!-- Event details will be dynamically populated here -->
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    ipcRenderer.on('event-data', (event, eventData) => {
+      // Access the event data and update the HTML content accordingly
+      const eventDetailsContainer = document.getElementById('event-details');
+      eventDetailsContainer.innerHTML = '';
+
+      const titleElement = document.createElement('h2');
+      titleElement.textContent = eventData.title;
+      eventDetailsContainer.appendChild(titleElement);
+
+      const descriptionElement = document.createElement('p');
+      descriptionElement.textContent = eventData.description;
+      eventDetailsContainer.appendChild(descriptionElement);
+
+      const startDateElement = document.createElement('p');
+      startDateElement.textContent = `Start Date: ${eventData.startDate.toLocaleDateString()}`;
+      eventDetailsContainer.appendChild(startDateElement);
+
+      const endDateElement = document.createElement('p');
+      endDateElement.textContent = `End Date: ${eventData.endDate.toLocaleDateString()}`;
+      eventDetailsContainer.appendChild(endDateElement);
+    });
+  </script>
+</body>
+</html>
