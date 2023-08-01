@@ -4,6 +4,9 @@ import { join } from 'node:path'
 
 let eventWindow: BrowserWindow | null = null;
 
+let addEventWindow: BrowserWindow | null = null;
+
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -85,6 +88,15 @@ app.whenReady().then(() => {
     });
   });
 
+  // Créez une nouvelle fenêtre d'ajout d'événement lorsque vous recevez un message de la fenêtre principale
+  ipcMain.on('open-add-event-window', () => {
+    if (!addEventWindow) {
+      createAddEventWindow();
+    }
+  });
+
+  
+
   createWindow()
 
   app.on('activate', function () {
@@ -103,3 +115,24 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+function createAddEventWindow() {
+  const eventWindow = new BrowserWindow({
+    width: 700,
+    height: 500,
+    title: "Création d'un évènement",
+
+    icon: join(__dirname, '../pages/img/typescript.png'),
+
+    webPreferences: {
+      preload: join(__dirname, './front/preload/preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+    }
+  })
+
+  eventWindow.loadFile('../pages/form.html')
+
+  return eventWindow;
+}

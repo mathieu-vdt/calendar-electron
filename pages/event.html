@@ -3,40 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Event Details</title>
-  <style>
-    /* Add your CSS styles here */
-  </style>
+  <link href="./css/styles.css" rel="stylesheet">
 </head>
 <body>
   <h1>Event Details</h1>
   <div id="event-details">
     <!-- Event details will be dynamically populated here -->
   </div>
-
-  <script>
-    const { ipcRenderer } = require('electron');
-
-    ipcRenderer.on('event-data', (event, eventData) => {
-      // Access the event data and update the HTML content accordingly
-      const eventDetailsContainer = document.getElementById('event-details');
-      eventDetailsContainer.innerHTML = '';
-
-      const titleElement = document.createElement('h2');
-      titleElement.textContent = eventData.title;
-      eventDetailsContainer.appendChild(titleElement);
-
-      const descriptionElement = document.createElement('p');
-      descriptionElement.textContent = eventData.description;
-      eventDetailsContainer.appendChild(descriptionElement);
-
-      const startDateElement = document.createElement('p');
-      startDateElement.textContent = `Start Date: ${eventData.startDate.toLocaleDateString()}`;
-      eventDetailsContainer.appendChild(startDateElement);
-
-      const endDateElement = document.createElement('p');
-      endDateElement.textContent = `End Date: ${eventData.endDate.toLocaleDateString()}`;
-      eventDetailsContainer.appendChild(endDateElement);
-    });
-  </script>
+  <form action="" method="POST" id='edit-form' style="display: none;">
+    <input type="hidden" name="id" value="">
+    Titre :<input type="text" name="titre"> <br><br>
+    <div class="dates">
+      <div>
+        <p>Date de début :</p>
+        <input type="date" name="date_deb">
+      </div>
+      <div>
+        <p>Date de fin :</p>
+        <input type="date" name="date_fin">
+      </div>
+      
+    </div> <br>
+    <textarea id="description-input" cols="30" rows="10"></textarea> <br>
+    <input type="button" id="save-btn" value="Sauvegarder">
+  </form> <br>
+  <div class="buttons">
+    <button id="edit">Modifier</button>
+    <button id="delete">Supprimer</button>
+  </div>
+  <script type="module" src="../dist/front/renderer/eventDetails.js" defer></script>
 </body>
 </html>

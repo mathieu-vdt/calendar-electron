@@ -65,3 +65,99 @@ body {
     margin-bottom: 5px;
     word-wrap: break-word
 }
+
+#edit{
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+
+    background-color: rgb(37, 119, 167);
+    color: whitesmoke;
+}
+
+#delete{
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+
+    background-color: rgb(167, 46, 37);
+    color: whitesmoke;
+}
+
+#save-btn, #add-event-button{
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+
+    background-color: rgb(44, 139, 31);
+    color: whitesmoke;
+}
+
+
+#add-event-button:hover{
+    transition: all .3s ease;
+    background-color: rgb(37, 116, 27);
+}
+#save-btn:hover{
+    transition: all .3s ease;
+    background-color: rgb(37, 116, 27);
+}
+
+#delete:hover{
+    transition: all .3s ease;
+    background-color: rgb(100, 25, 20);
+}
+
+#edit:hover{
+    transition: all .3s ease;
+    background-color: rgb(23, 82, 116);
+}
+
+
+#edit-form{
+    width: 500px;
+    margin: 30px;
+}
+
+#edit-form .dates{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#edit-form input{
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    outline: none;
+    border: solid 0.5px rgba(0, 0, 0, 0.308);
+}
+
+#edit-form textarea{
+    width: 100%;
+}
+
+#edit-form #submit-button{
+    width: 40%;
+    text-align: center;
+
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+
+    background-color: rgb(44, 139, 31);
+    color: whitesmoke;
+}
+
+
+#edit-form #submit-button:hover{
+    transition: all .3s ease;
+    background-color: rgb(37, 116, 27);
+}
+
+

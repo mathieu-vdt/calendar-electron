@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un évènement</title>
+  <link href="./css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <form action="" method="POST" id="edit-form">
+	Titre :<input type="text" name="titre"> <br>
+	<div class="dates">
+    <div>
+      <p>Date de début :</p>
+      <input type="date" name="date_deb">
+    </div>
+    <div>
+      <p>Date de fin :</p>
+      <input type="date" name="date_fin">
+    </div>
+  </div><br>
+	<textarea id="description-input" cols="30" rows="10"></textarea>
+	<input type="button" id="submit-button" value="Créer">
+  </form>
+  <script type="module" src="../dist/front/renderer/AddForm.js" defer></script>
+</body>
+</html>

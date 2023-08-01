@@ -1,35 +1,23 @@
+import { IEvent } from '../../interfaces/event';
+import { getAll } from '../model/index.js';
 const { ipcRenderer } = require("electron");
 
+
 (async () => {
-	
+	const addEventButton = document.getElementById('add-event-button');
+
+	if(addEventButton){
+		addEventButton.addEventListener('click', () => {
+			ipcRenderer.send('open-add-event-window');
+		});
+
+	}
 	let currentMonth: number;
 	let currentYear: number;
 	const monthNames: string[] = [
 	  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
 	  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
 	];
-  
-	interface CalendarEvent {
-		title: string;
-		description: string;
-		startDate: Date;
-		endDate: Date;
-	  }
-	  
-	  const events: CalendarEvent[] = [
-		{ 
-		  title: 'Événement 1', 
-		  description: 'Description de l\'événement 1',
-		  startDate: new Date(2023, 6, 1), // Date de début de l'événement (année, mois, jour)
-		  endDate: new Date(2023, 6, 1)    // Date de fin de l'événement (année, mois, jour)
-		},
-		{ 
-		  title: 'Événement 2', 
-		  description: 'Description de l\'événement 2',
-		  startDate: new Date(2023, 6, 3), // Date de début de l'événement (année, mois, jour)
-		  endDate: new Date(2023, 6, 7)    // Date de fin de l'événement (année, mois, jour)
-		}
-	  ];
 	  
 
 	const monthElement = document.querySelector('.month') as HTMLElement;
@@ -38,7 +26,7 @@ const { ipcRenderer } = require("electron");
 	const prevMonthBtn = document.getElementById('prevMonthBtn') as HTMLButtonElement;
 	const nextMonthBtn = document.getElementById('nextMonthBtn') as HTMLButtonElement;
   
-	function updateCalendar() {
+	async function updateCalendar() {
 	  // Clear the days element
 	  daysElement.innerHTML = "";
   
@@ -83,18 +71,18 @@ const { ipcRenderer } = require("electron");
 	   const currentDate = new Date(currentYear, currentMonth, i);
 
 		// Find events for the current date
-		const eventsOnCurrentDate = events.filter(event => {
-			const eventStartDate = new Date(event.startDate);
-			const eventEndDate = new Date(event.endDate);
+		const eventsOnCurrentDate = (await getAll()).filter(event => {
+			const eventStartDate = new Date(event.date_deb);
+			const eventEndDate = new Date(event.date_fin);
 
 			// Check if the current date falls within the event's start and end dates
 			return currentDate >= eventStartDate && currentDate <= eventEndDate;
 		});
 
 		// Add events to the day element
-		eventsOnCurrentDate.forEach((event, index) => {
+		eventsOnCurrentDate.forEach((event: IEvent, index) => {
 			const eventElement = document.createElement('div');
-			eventElement.textContent = event.title;
+			eventElement.textContent = event.titre;
 			eventElement.classList.add('event');
 		  
 			eventElement.setAttribute('data-event-index', index.toString());
@@ -102,7 +90,7 @@ const { ipcRenderer } = require("electron");
 			day.appendChild(eventElement);
 		  
 			// Event click handler
-			eventElement.addEventListener('click', ((eventData: CalendarEvent) => {
+			eventElement.addEventListener('click', ((eventData: IEvent) => {
 			  return (event: MouseEvent) => {
 				// Send the selected event data to the main process
 				ipcRenderer.send('event-data', eventData);
@@ -143,16 +131,6 @@ const { ipcRenderer } = require("electron");
 	// Initialize the calendar
 	updateCalendar();
 
-
-	function createEventClickHandler(index: number) {
-		return (event: MouseEvent) => {
-		  const eventIndex = (event.target as HTMLElement).getAttribute('data-event-index');
-		  const selectedEvent = events[Number(eventIndex)];
-	  
-		  // Send the selected event data to the main process
-		  ipcRenderer.send('event-data', selectedEvent);
-		};
-	  }
 
 })()
   

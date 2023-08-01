@@ -30,8 +30,8 @@ export function getById(id: number) {
 }
 export function addEvent(event: IEvent) {
     return new Promise((resolve, rej) => {
-        connection.query('INSERT INTO event (titre,date_deb, date_fin, description) VALUES (?,?)',
-            [event.titre, event.date_deb, event.date_fin, event.description,],
+        connection.query('INSERT INTO event (titre,date_deb, date_fin, description) VALUES (?,?,?,?)',
+            [event.titre, event.date_deb, event.date_fin, event.description],
             (err: Error) => {
                 if (err) rej(err)
                 else resolve("Utilisateur ajouté")
