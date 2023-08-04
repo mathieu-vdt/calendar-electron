@@ -23,17 +23,17 @@ function createWindow() {
     height: 600,
     title: "Mon CRUD Electron",
 
-    icon: join(__dirname, '../pages/img/typescript.png'),
+    icon: join(__dirname, '../../pages/img/typescript.png'),
 
     webPreferences: {
-      preload: join(__dirname, './front/preload/preload.js'),
+      preload: join(__dirname, '../front/preload/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
     }
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('../pages/index.html')
+  mainWindow.loadFile('../../pages/index.html')
 
 
 
@@ -53,16 +53,16 @@ function createEventWindow(): BrowserWindow {
     height: 500,
     title: "Évènement",
 
-    icon: join(__dirname, '../pages/img/typescript.png'),
+    icon: join(__dirname, '../../pages/img/typescript.png'),
 
     webPreferences: {
-      preload: join(__dirname, './front/preload/preload.js'),
+      preload: join(__dirname, '../front/preload/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
     }
   })
 
-  eventWindow.loadFile('../pages/event.html')
+  eventWindow.loadFile('../../pages/event.html')
 
 
 
@@ -86,7 +86,7 @@ app.whenReady().then(() => {
     }
 
     // Load the HTML file for displaying event information
-    eventWindow.loadFile('../pages/event.html');
+    eventWindow.loadFile('../../pages/event.html');
 
     // Pass the event information to the event window
     eventWindow.webContents.on('did-finish-load', () => {
@@ -132,16 +132,16 @@ function createAddEventWindow() {
     height: 500,
     title: "Création d'un évènement",
 
-    icon: join(__dirname, '../pages/img/typescript.png'),
+    icon: join(__dirname, '../../pages/img/typescript.png'),
 
     webPreferences: {
-      preload: join(__dirname, './front/preload/preload.js'),
+      preload: join(__dirname, '../front/preload/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
     }
   })
 
-  eventWindow.loadFile('../pages/form.html')
+  eventWindow.loadFile('../../pages/form.html')
 
   return eventWindow;
 }

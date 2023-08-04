@@ -83,7 +83,6 @@ async function fetchAllEvents() {
 	   
 	   try {
 			const events = await fetchAllEvents();
-			console.log(events)
 
 			// Récupère les évènements de la date actuelle
 			const eventsOnCurrentDate = events.filter((event: IEvent) => {
