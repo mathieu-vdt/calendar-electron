@@ -70,6 +70,7 @@ const { ipcRenderer } = require('electron');
 				form.style.display = 'none'
 				eventDetailsContainer.style.display = 'block'
 				editBtn.innerHTML = 'Modifier'
+				window.close();
 
 			})
 			.catch((error) => {
@@ -81,8 +82,7 @@ const { ipcRenderer } = require('electron');
 	  deleteBtn.addEventListener('click', function(){
 		delEvent(parseInt((document.querySelector('[name="id"]') as HTMLInputElement).value))
 		.then(() => {
-			alert('Supprimé !')
-
+			window.close();
 		})
 		.catch((error) => {
 			alert('Erreur lors de la suppression de l\'événement');

@@ -2,6 +2,15 @@ import { IEvent } from '../../interfaces/event';
 import { getAll } from '../model/index.js';
 const { ipcRenderer } = require("electron");
 
+async function fetchAllEvents() {
+	try {
+	  const events = await ipcRenderer.invoke('get-all-events');
+	  // Faites quelque chose avec les événements récupérés
+	  return events;
+	} catch (error) {
+	  console.error('Erreur lors de la récupération des événements :', error);
+	}
+  }
 
 (async () => {
 	const addEventButton = document.getElementById('add-event-button');
@@ -69,35 +78,48 @@ const { ipcRenderer } = require("electron");
 	   day.appendChild(divInfo);
 
 	   const currentDate = new Date(currentYear, currentMonth, i);
+	   currentDate.setHours(0, 0, 0, 0);
+		
+	   
+	   try {
+			const events = await fetchAllEvents();
+			console.log(events)
 
-		// Find events for the current date
-		const eventsOnCurrentDate = (await getAll()).filter(event => {
-			const eventStartDate = new Date(event.date_deb);
-			const eventEndDate = new Date(event.date_fin);
+			// Récupère les évènements de la date actuelle
+			const eventsOnCurrentDate = events.filter((event: IEvent) => {
+				const eventStartDate = new Date(event.date_deb);
+				const eventEndDate = new Date(event.date_fin);
 
-			// Check if the current date falls within the event's start and end dates
-			return currentDate >= eventStartDate && currentDate <= eventEndDate;
-		});
+				eventStartDate.setHours(0, 0, 0, 0);
+				eventEndDate.setHours(0, 0, 0, 0);
 
-		// Add events to the day element
-		eventsOnCurrentDate.forEach((event: IEvent, index) => {
-			const eventElement = document.createElement('div');
-			eventElement.textContent = event.titre;
-			eventElement.classList.add('event');
-		  
-			eventElement.setAttribute('data-event-index', index.toString());
-		  
-			day.appendChild(eventElement);
-		  
-			// Event click handler
-			eventElement.addEventListener('click', ((eventData: IEvent) => {
-			  return (event: MouseEvent) => {
-				// Send the selected event data to the main process
-				ipcRenderer.send('event-data', eventData);
-			  };
-			})(event));
-		  });
+				return currentDate >= eventStartDate && currentDate <= eventEndDate;
+			});
 
+			// Add events to the day element
+			eventsOnCurrentDate.forEach((event: IEvent, index: Number) => {
+				const eventElement = document.createElement('div');
+				eventElement.textContent = event.titre;
+				eventElement.classList.add('event');
+
+				eventElement.setAttribute('data-event-index', index.toString());
+
+				day.appendChild(eventElement);
+
+				// Event click handler
+				eventElement.addEventListener('click', ((eventData: IEvent) => {
+				return (event: MouseEvent) => {
+					// Send the selected event data to the main process
+					ipcRenderer.send('event-data', eventData);
+				};
+				})(event));
+			});
+
+	  } catch (error) {
+		console.error('Erreur lors de la récupération des événements :', error);
+	  }
+
+		
 	   daysElement.appendChild(day);
 	 }
 	}

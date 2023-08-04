@@ -1,11 +1,20 @@
 // Modules to control application life and create native browser window
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'node:path'
+import { getAll } from '../front/model/index.js';
 
 let eventWindow: BrowserWindow | null = null;
 
 let addEventWindow: BrowserWindow | null = null;
 
+ipcMain.handle('get-all-events', async (event) => {
+  try {
+    const events = await getAll();
+    return events;
+  } catch (error) {
+    throw new Error('Erreur lors de la récupération des événements.');
+  }
+});
 
 function createWindow() {
   // Create the browser window.
@@ -25,7 +34,6 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadFile('../pages/index.html')
-  // mainWindow.loadURL('https://github.com')
 
 
 
@@ -88,6 +96,7 @@ app.whenReady().then(() => {
     });
   });
 
+
   // Créez une nouvelle fenêtre d'ajout d'événement lorsque vous recevez un message de la fenêtre principale
   ipcMain.on('open-add-event-window', () => {
     if (!addEventWindow) {
@@ -136,3 +145,5 @@ function createAddEventWindow() {
 
   return eventWindow;
 }
+
+

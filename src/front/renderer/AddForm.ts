@@ -26,7 +26,7 @@ if (submitButton != null) {
     // Utilisation de la fonction addEvent avec les données de l'événement
     addEvent(eventData)
       .then(() => {
-        console.log('Évènement ajouté');
+        window.close();
       })
       .catch((error) => {
         console.error('Erreur lors de l\'ajout de l\'événement :', error);
