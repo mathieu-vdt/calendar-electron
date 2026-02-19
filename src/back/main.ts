@@ -16,6 +16,7 @@ function createMainWindow(): BrowserWindow {
     minWidth: 760,
     minHeight: 500,
     title: 'Calendar',
+    frame: false,
     icon: join(__dirname, '../pages/img/typescript.png'),
     webPreferences: {
       preload: join(__dirname, './front/preload/preload.js'),
@@ -36,6 +37,7 @@ function createEventWindow(): BrowserWindow {
     height: 520,
     minWidth: 480,
     title: 'Event Details',
+    frame: false,
     parent: mainWindow ?? undefined,
     icon: join(__dirname, '../pages/img/typescript.png'),
     webPreferences: {
@@ -56,6 +58,7 @@ function createAddEventWindow(): BrowserWindow {
     height: 480,
     minWidth: 400,
     title: 'New Event',
+    frame: false,
     parent: mainWindow ?? undefined,
     icon: join(__dirname, '../pages/img/typescript.png'),
     webPreferences: {
@@ -121,6 +124,19 @@ app.whenReady().then(() => {
   // Forward explicit refresh-calendar requests from child windows
   ipcMain.on('refresh-calendar', () => {
     sendToMainWindow('refresh-calendar');
+  });
+
+  // Custom window controls
+  ipcMain.on('win-minimize', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize();
+  });
+  ipcMain.on('win-maximize', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win) return;
+    win.isMaximized() ? win.unmaximize() : win.maximize();
+  });
+  ipcMain.on('win-close', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
   });
 
   app.on('activate', () => {
