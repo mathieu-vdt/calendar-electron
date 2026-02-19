@@ -1,163 +1,610 @@
+﻿/* â”€â”€â”€ Design tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+:root {
+  --primary:        #818cf8;
+  --primary-dark:   #6366f1;
+  --primary-glow:   rgba(129, 140, 248, 0.35);
+  --danger:         #f87171;
+  --danger-dark:    #ef4444;
+  --danger-glow:    rgba(248, 113, 113, 0.3);
+  --success:        #34d399;
+  --success-dark:   #10b981;
+  --success-glow:   rgba(52, 211, 153, 0.3);
+
+  /* Glass layer tokens */
+  --glass-bg:       rgba(255, 255, 255, 0.07);
+  --glass-bg-2:     rgba(255, 255, 255, 0.12);
+  --glass-bg-3:     rgba(255, 255, 255, 0.18);
+  --glass-border:   rgba(255, 255, 255, 0.15);
+  --glass-border-2: rgba(255, 255, 255, 0.25);
+  --glass-blur:     blur(18px);
+  --glass-blur-sm:  blur(10px);
+
+  /* Text */
+  --text:           rgba(255, 255, 255, 0.95);
+  --text-2:         rgba(255, 255, 255, 0.65);
+  --text-3:         rgba(255, 255, 255, 0.35);
+
+  /* Today highlight */
+  --today-bg:       rgba(129, 140, 248, 0.2);
+  --today-border:   #818cf8;
+  --event-color:    rgba(99, 102, 241, 0.85);
+
+  --radius-sm:      6px;
+  --radius:         10px;
+  --radius-lg:      16px;
+  --radius-xl:      22px;
+  --shadow-sm:      0 2px 8px rgba(0,0,0,0.25);
+  --shadow:         0 4px 16px rgba(0,0,0,0.3);
+  --shadow-md:      0 8px 24px rgba(0,0,0,0.35);
+  --shadow-lg:      0 16px 40px rgba(0,0,0,0.4);
+  --transition:     all 0.18s ease;
+}
+
+/* â”€â”€â”€ Reset & base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { height: 100%; }
+
 body {
-	font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  min-height: 100%;
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 14px;
+
+  /* Deep gradient background */
+  background:
+    radial-gradient(ellipse at 20% 20%,  rgba(99, 102, 241, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 10%,  rgba(167, 139, 250, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%,  rgba(59,  130, 246, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 85%,  rgba(139, 92,  246, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, #0f0c29 0%, #1a1040 40%, #0d1b3e 100%);
+  background-attachment: fixed;
 }
 
+/* â”€â”€â”€ App shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.app-header {
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header .app-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header .app-title svg {
+  width: 22px;
+  height: 22px;
+  color: var(--primary);
+}
+
+/* â”€â”€â”€ Calendar container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .calendar {
-	margin: 20px;
+  padding: 20px 24px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.month {
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 10px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* â”€â”€â”€ Month navigation bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-sm);
 }
 
-.month button{
-	outline: none;
-    border: none;
-    cursor: pointer;
-    background-color: transparent;
-    height: 30px;
+.current-month-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  min-width: 160px;
+  text-align: center;
 }
 
+.nav-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.nav-btn:hover {
+  background: var(--glass-bg-3);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* â”€â”€â”€ Weekday headers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.weekdays span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-3);
+  padding: 6px 0;
+}
+
+/* â”€â”€â”€ Days grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .days {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-	gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
 }
 
-
+/* â”€â”€â”€ Day cell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .day {
-	border: 1px solid #ccc;
-	padding: 5px;
-    min-height: 150px;
-    position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 6px;
+  min-height: 110px;
+  cursor: default;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
 }
 
 .day:hover {
-	background-color: whitesmoke;
-    transition: all .2s ease;
+  background: var(--glass-bg-2);
+  border-color: var(--glass-border-2);
+  box-shadow: var(--shadow);
 }
 
-
-.day .day-info{
-    text-align: start;
-	position: relative;
-    top: -10px;
-    width: 100%;
+.day.today {
+  background: var(--today-bg);
+  border-color: var(--today-border);
+  box-shadow: 0 0 14px var(--primary-glow);
 }
 
-.day .day-info .weekday{
-    top: -15px;
-    right: 10px;
-    color: rgba(128, 128, 128, 0.719);
-    position: absolute;
+.day-number {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  line-height: 1;
+  margin-bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.day .event{
-    padding: 10px;
-    background-color: #da812fb2;
-    border-radius: 8px;
-    margin-bottom: 5px;
-    word-wrap: break-word
+.day.today .day-number {
+  background: var(--today-border);
+  color: #fff;
+  box-shadow: 0 0 8px var(--primary-glow);
 }
 
-#edit{
-    padding: 10px 20px;
-    outline: none;
-    border: none;
-    border-radius: 4px;
-
-    background-color: rgb(37, 119, 167);
-    color: whitesmoke;
+.day.other-month {
+  background: rgba(255,255,255,0.02);
+  opacity: 0.4;
 }
 
-#delete{
-    padding: 10px 20px;
-    outline: none;
-    border: none;
-    border-radius: 4px;
-
-    background-color: rgb(167, 46, 37);
-    color: whitesmoke;
+/* â”€â”€â”€ Event chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.event {
+  padding: 3px 7px;
+  background: rgba(99, 102, 241, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: var(--transition);
+  line-height: 1.6;
 }
 
-#save-btn, #add-event-button{
-    padding: 10px 20px;
-    outline: none;
-    border: none;
-    border-radius: 4px;
-
-    background-color: rgb(44, 139, 31);
-    color: whitesmoke;
+.event:hover {
+  background: rgba(99, 102, 241, 0.85);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
-
-#add-event-button:hover{
-    transition: all .3s ease;
-    background-color: rgb(37, 116, 27);
-}
-#save-btn:hover{
-    transition: all .3s ease;
-    background-color: rgb(37, 116, 27);
-}
-
-#delete:hover{
-    transition: all .3s ease;
-    background-color: rgb(100, 25, 20);
-}
-
-#edit:hover{
-    transition: all .3s ease;
-    background-color: rgb(23, 82, 116);
+/* â”€â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-
-#edit-form{
-    width: 500px;
-    margin: 30px;
+.btn-primary {
+  background: rgba(99, 102, 241, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-color: rgba(129, 140, 248, 0.5);
+}
+.btn-primary:hover {
+  background: rgba(99, 102, 241, 0.95);
+  box-shadow: 0 0 16px var(--primary-glow);
+  border-color: var(--primary);
 }
 
-#edit-form .dates{
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.btn-danger {
+  background: rgba(239, 68, 68, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-color: rgba(248, 113, 113, 0.4);
+}
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.95);
+  box-shadow: 0 0 16px var(--danger-glow);
+  border-color: var(--danger);
 }
 
-#edit-form input{
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    outline: none;
-    border: solid 0.5px rgba(0, 0, 0, 0.308);
+.btn-secondary {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-2);
+  border-color: var(--glass-border);
+}
+.btn-secondary:hover {
+  background: var(--glass-bg-2);
+  border-color: var(--glass-border-2);
+  color: var(--text);
 }
 
-#edit-form textarea{
-    width: 100%;
+.btn-success {
+  background: rgba(16, 185, 129, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+.btn-success:hover {
+  background: rgba(16, 185, 129, 0.95);
+  box-shadow: 0 0 16px var(--success-glow);
+  border-color: var(--success);
 }
 
-#edit-form #submit-button{
-    width: 40%;
-    text-align: center;
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.btn-lg { padding: 10px 22px; font-size: 14px; }
 
-    padding: 10px 20px;
-    outline: none;
-    border: none;
-    border-radius: 4px;
+#add-event-button { padding: 8px 16px; }
 
-    background-color: rgb(44, 139, 31);
-    color: whitesmoke;
+/* â”€â”€â”€ Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.card {
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-
-#edit-form #submit-button:hover{
-    transition: all .3s ease;
-    background-color: rgb(37, 116, 27);
+.card-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--glass-border);
 }
+
+.card-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.card-header .meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.card-header .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.card-body {
+  padding: 20px 24px;
+}
+
+.card-body .description {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-top: 4px;
+}
+
+.card-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* â”€â”€â”€ Page layout (event / form pages) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.page-wrapper {
+  padding: 24px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-title svg { color: var(--primary); }
+
+/* â”€â”€â”€ Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 6px;
+  letter-spacing: 0.1px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: var(--transition);
+  line-height: 1.5;
+}
+
+.form-control::placeholder { color: var(--text-3); }
+
+/* date input calendar icon */
+.form-control::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+.form-control:focus {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* â”€â”€â”€ Toast notification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.toast {
+  background: rgba(30, 27, 75, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  border: 1px solid var(--glass-border);
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.2s ease, fadeOut 0.3s ease 2.5s forwards;
+  max-width: 280px;
+}
+
+.toast.toast-success {
+  background: rgba(6, 78, 59, 0.8);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+.toast.toast-danger {
+  background: rgba(127, 29, 29, 0.8);
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; pointer-events: none; }
+}
+
+/* â”€â”€â”€ Confirm dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+.dialog-overlay.hidden { display: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.dialog {
+  background: rgba(20, 16, 60, 0.7);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 28px;
+  max-width: 360px;
+  width: 90%;
+  animation: popIn 0.18s ease;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+.dialog h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.dialog p {
+  font-size: 14px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* â”€â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-3);
+}
+.empty-state svg {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+.empty-state p { font-size: 14px; }
+
+/* â”€â”€â”€ Section label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+/* â”€â”€â”€ Divider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: 20px 0;
+}
+
+/* â”€â”€â”€ Double-click hint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.dblclick-hint {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.2px;
+}
+
+/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
 

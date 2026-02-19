@@ -1,138 +1,135 @@
-// Modules to control application life and create native browser window
-import { app, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'node:path'
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { join } from 'node:path';
 
-let eventWindow: BrowserWindow | null = null;
+// ── Window references ─────────────────────────────────────────────────────────
 
+let mainWindow:     BrowserWindow | null = null;
+let eventWindow:    BrowserWindow | null = null;
 let addEventWindow: BrowserWindow | null = null;
 
+// ── Window factories ──────────────────────────────────────────────────────────
 
-function createWindow() {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    title: "Mon CRUD Electron",
-
+function createMainWindow(): BrowserWindow {
+  const win = new BrowserWindow({
+    width: 1100,
+    height: 700,
+    minWidth: 760,
+    minHeight: 500,
+    title: 'Calendar',
     icon: join(__dirname, '../pages/img/typescript.png'),
-
     webPreferences: {
       preload: join(__dirname, './front/preload/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
-    }
-  })
+    },
+  });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('../pages/index.html')
-  // mainWindow.loadURL('https://github.com')
-
-
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
-
-  //gestion des évènements
-  // mainWindow.on("move", () => {
-  //   console.log('fenetre deplacé');
-
-  // })
+  win.loadFile('../pages/index.html');
+  win.on('focus', () => { sendToMainWindow('refresh-calendar'); });
+  win.on('closed', () => { mainWindow = null; });
+  return win;
 }
 
 function createEventWindow(): BrowserWindow {
-  const eventWindow = new BrowserWindow({
-    width: 700,
-    height: 500,
-    title: "Évènement",
-
+  const win = new BrowserWindow({
+    width: 680,
+    height: 520,
+    minWidth: 480,
+    title: 'Event Details',
+    parent: mainWindow ?? undefined,
     icon: join(__dirname, '../pages/img/typescript.png'),
-
     webPreferences: {
       preload: join(__dirname, './front/preload/preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
-    }
-  })
+    },
+  });
 
-  eventWindow.loadFile('../pages/event.html')
-
-
-
-  // Open the DevTools.
-  eventWindow.webContents.openDevTools()
-
-  return eventWindow;
-
+  win.loadFile('../pages/event.html');
+  win.on('closed', () => { eventWindow = null; });
+  return win;
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+function createAddEventWindow(): BrowserWindow {
+  const win = new BrowserWindow({
+    width: 560,
+    height: 480,
+    minWidth: 400,
+    title: 'New Event',
+    parent: mainWindow ?? undefined,
+    icon: join(__dirname, '../pages/img/typescript.png'),
+    webPreferences: {
+      preload: join(__dirname, './front/preload/preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  win.loadFile('../pages/form.html');
+  win.on('closed', () => { addEventWindow = null; });
+  return win;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function sendToMainWindow(channel: string, ...args: unknown[]): void {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, ...args);
+  }
+}
+
+// ── App lifecycle ─────────────────────────────────────────────────────────────
+
 app.whenReady().then(() => {
-  
-  // Écouter l'événement 'event-data' du processus de rendu
-  ipcMain.on('event-data', (event, eventData) => {
-    // Check if the event window is already open or has been destroyed
+  mainWindow = createMainWindow();
+
+  // Open event details window
+  ipcMain.on('event-data', (_event, eventData) => {
     if (!eventWindow || eventWindow.isDestroyed()) {
       eventWindow = createEventWindow();
+    } else {
+      eventWindow.focus();
     }
 
-    // Load the HTML file for displaying event information
-    eventWindow.loadFile('../pages/event.html');
+    if (eventWindow.webContents.isLoading()) {
+      eventWindow.webContents.once('did-finish-load', () => {
+        eventWindow?.webContents.send('event-data', eventData);
+      });
+    } else {
+      eventWindow.webContents.send('event-data', eventData);
+    }
+  });
 
-    // Pass the event information to the event window
-    eventWindow.webContents.on('did-finish-load', () => {
-      if (eventWindow) {
-        eventWindow.webContents.send('event-data', eventData);
+  // Open add-event window; optional date string payload from double-click
+  ipcMain.on('open-add-event-window', (_event, dateStr: string | null) => {
+    if (!addEventWindow || addEventWindow.isDestroyed()) {
+      addEventWindow = createAddEventWindow();
+
+      if (dateStr) {
+        addEventWindow.webContents.once('did-finish-load', () => {
+          addEventWindow?.webContents.send('prefill-date', dateStr);
+        });
       }
-    });
-  });
-
-  // Créez une nouvelle fenêtre d'ajout d'événement lorsque vous recevez un message de la fenêtre principale
-  ipcMain.on('open-add-event-window', () => {
-    if (!addEventWindow) {
-      createAddEventWindow();
+    } else {
+      addEventWindow.focus();
+      if (dateStr) {
+        addEventWindow.webContents.send('prefill-date', dateStr);
+      }
     }
   });
 
-  
+  // Forward explicit refresh-calendar requests from child windows
+  ipcMain.on('refresh-calendar', () => {
+    sendToMainWindow('refresh-calendar');
+  });
 
-  createWindow()
-
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
-})
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-
-function createAddEventWindow() {
-  const eventWindow = new BrowserWindow({
-    width: 700,
-    height: 500,
-    title: "Création d'un évènement",
-
-    icon: join(__dirname, '../pages/img/typescript.png'),
-
-    webPreferences: {
-      preload: join(__dirname, './front/preload/preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      mainWindow = createMainWindow();
     }
-  })
+  });
+});
 
-  eventWindow.loadFile('../pages/form.html')
-
-  return eventWindow;
-}
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});
